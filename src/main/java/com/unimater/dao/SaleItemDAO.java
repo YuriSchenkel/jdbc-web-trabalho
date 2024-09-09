@@ -6,13 +6,15 @@ import com.unimater.model.SaleItem;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SaleItemDAO extends GenericDAOImpl<SaleItem> implements GenericDAO<SaleItem> {
 
     private Connection connection;
     private final String TABLE_NAME = "sale_item";
 
-    private final List<String> COLUMNS = List.of("product_id", "quantity", "percentual_discount", "sale_id");
+    private final List<String> COLUMNS = List.of("product_id", "quantity",
+            "percentual_discount", "sale_id");
 
     private ProductDAO productDAO;
 
@@ -44,6 +46,28 @@ public class SaleItemDAO extends GenericDAOImpl<SaleItem> implements GenericDAO<
                 e.printStackTrace();
             }
             return saleItems;
+    }
+
+    @Override
+    public void upsert(SaleItem object) {
+        System.out.println("Do the upsert by a Sale");
+    }
+
+    public void upsert(SaleItem object, int saleId){
+        try{
+            PreparedStatement pstmt = connection
+                    .prepareStatement("INSERT INTO "
+                    + TABLE_NAME
+                    + " ("
+                    + COLUMNS.stream().collect(Collectors.joining(", "))
+                    + ") VALUES ("
+                    + COLUMNS.stream().map(item -> "?").collect(Collectors.joining(", "))
+                    +")");
+            pstmt = object.prepareStatement(pstmt);
+            pstmt.setInt(4, saleId);
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }
 
 }

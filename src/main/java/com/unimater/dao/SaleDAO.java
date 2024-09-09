@@ -28,4 +28,12 @@ public class SaleDAO extends GenericDAOImpl<Sale> implements GenericDAO<Sale> {
         return sale;
     }
 
+    @Override
+    public void upsert(Sale object) {
+        super.upsert(object);
+        saleItemDAO = new SaleItemDAO(connection);
+        for (SaleItem item : object.getSaleItems()){
+            saleItemDAO.upsert(item, object.getId());
+        };
+    }
 }
