@@ -1,8 +1,8 @@
 package com.unimater;
 
 import com.sun.net.httpserver.HttpServer;
-import com.unimater.controller.HelloWorldHandler;
-import com.unimater.controller.ProductTypeHandler;
+import com.unimater.controller.*;
+import com.unimater.model.Sale;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,7 +21,7 @@ public class App {
 
 //
             Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/your_db", "root", "root"
+                    "jdbc:mysql://localhost:3306/meu_db", "root", "root"
             );
 
             servidor.createContext("/helloWorld",
@@ -29,6 +29,15 @@ public class App {
 
             servidor.createContext("/productType",
                     new ProductTypeHandler(connection));
+
+            servidor.createContext("/product",
+                    new ProductHandler(connection));
+
+            servidor.createContext("/sale",
+                    new SaleHandler(connection));
+
+            servidor.createContext("/saleItem",
+                    new SaleItemHandler(connection));
 
             servidor.setExecutor(null);
             servidor.start();
